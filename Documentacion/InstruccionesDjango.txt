@@ -1,0 +1,91 @@
+======================================================================
+🚀 GUÍA UNIVERSAL Y PROPÓSITO DE CADA PASO EN DJANGO (WINDOWS)
+======================================================================
+
+Usa este archivo para entender el "QUÉ HACE" y el "PARA QUÉ SIRVE" 
+cada comando y carpeta cuando inicias cualquier proyecto web.
+
+----------------------------------------------------------------------
+📦 PASO 1: EL ENTORNO AISLADO (VENV)
+----------------------------------------------------------------------
+👉 ¿PARA QUÉ SIRVE?: Evita que las librerías de diferentes proyectos 
+   se mezclen o causen errores en tu computadora. Es como crear un 
+   laboratorio limpio y cerrado para cada experimento.
+
+1) cd C:\Ruta\De\Tu\Carpeta\NombreProyecto
+   • PROPÓSITO: Pararte físicamente con la consola en el lugar del disco 
+     duro donde vas a construir tu software.
+
+2) python -m venv venv
+   • PROPÓSITO: Crear la carpeta física aislada (la caja de cristal).
+
+3) venv\Scripts\activate
+   • PROPÓSITO: "Encender" el aislamiento. A partir de este momento, 
+     cualquier cosa que instales se quedará dentro de este proyecto.
+     (Sabrás que funcionó por el "(venv)" al inicio de la línea).
+
+----------------------------------------------------------------------
+📥 PASO 2: INSTALACIÓN DE LIBRERÍAS (DEPENDENCIAS)
+----------------------------------------------------------------------
+👉 ¿PARA QUÉ SIRVE?: Descargar las herramientas y motores de código 
+   que Python no trae de fábrica para poder programar la web y las bases de datos.
+
+1) pip install Django PyMySQL django-environ
+   • Django: El motor principal para construir el sitio web.
+   • PyMySQL: El "traductor" que le permite a Django hablar con MySQL.
+   • django-environ: El "guardián" que lee las contraseñas ocultas del archivo .env.
+
+----------------------------------------------------------------------
+🏗️ PASO 3: EL PROYECTO VS LA APLICACIÓN
+----------------------------------------------------------------------
+👉 ¿PARA QUÉ SIRVE?: Django divide el trabajo en dos jerarquías: el 
+   "Proyecto" (el sitio web global) y las "Apps" (los módulos internos).
+
+1) django-admin startproject nombre_proyecto .
+   • PROPÓSITO: Crear el "Cerebro Central" del sitio (ajustes, rutas globales).
+   • ¿POR QUÉ EL PUNTO '.'?: Para decirle a Django que cree el timón 
+     (manage.py) en la carpeta actual de afuera, evitando que se cree 
+     una carpeta dentro de otra con el mismo nombre.
+
+2) python manage.py startapp nombre_app
+   • PROPÓSITO: Crear un módulo específico de la web. En Django, un 
+     proyecto se compone de apps independientes (ej: app_canciones, 
+     app_usuarios, app_carrito). Esto hace que tu código sea ordenado.
+
+----------------------------------------------------------------------
+🔌 PASO 4: EL CABLEADO INTERNO (SETTINGS.PY)
+----------------------------------------------------------------------
+👉 ¿PARA QUÉ SIRVE?: Avisarle al Cerebro Central (`settings.py`) que 
+   creaste nuevas piezas y decirle dónde debe buscar cada cosa.
+
+1) Registrar la app en 'INSTALLED_APPS':
+   • PROPÓSITO: Si no la pones aquí, Django ignorará por completo la 
+     carpeta de tu aplicación y sus bases de datos.
+
+2) Configurar 'DIRS': [os.path.join(BASE_DIR, 'templates')] en TEMPLATES:
+   • PROPÓSITO: Django es ciego respecto a dónde guardas tus diseños visuales. 
+     Esta línea le pone "anteojos" para que sepa exactamente en qué carpeta 
+     están tus archivos HTML.
+
+----------------------------------------------------------------------
+🎨 PASO 5: LA CARPETA TEMPLATES (EL FRONTEND)
+----------------------------------------------------------------------
+👉 ¿PARA QUÉ SIRVE?: Crear la carpeta raíz llamada `templates`.
+
+   • ¿QUÉ ES?: Es el contenedor oficial de todo tu FRONTEND. Aquí es 
+     donde Claude (tu diseñador) subirá y guardará todo el código HTML, 
+     los estilos visuales de Bootstrap y las interfaces con las que 
+     el usuario va a interactuar en la pantalla. Django buscará aquí 
+     adentro cada vez que una vista necesite "dibujar" una página web.
+
+----------------------------------------------------------------------
+🚦 PASO 6: ENCENDER EL MOTOR (SERVER)
+----------------------------------------------------------------------
+1) python manage.py runserver
+   • PROPÓSITO: Convertir tu computadora local en un servidor web provisional. 
+     Mantiene la consola ocupada escuchando las visitas en 'URL_DE_SERVIDOR_PROVISIONAL'.
+
+2) Ctrl + C
+   • PROPÓSITO: Apagar el servidor de manera segura para poder volver a 
+     escribir comandos en esa terminal.
+======================================================================

@@ -1,0 +1,22 @@
+# Ignorar el entorno virtual (es muy pesado y local)
+venv/
+ENV/
+env/
+
+# Ignorar archivos temporales de Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# Ignorar la base de datos local SQLite (si la usas temporalmente)
+*.sqlite3
+
+# Ignorar carpetas del sistema operativo o del editor
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Ignorar tu archivo secreto de contraseñas (por seguridad)
+.env

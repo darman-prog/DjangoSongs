@@ -13,7 +13,7 @@ environ.Env.read_env(BASE_DIR / '.env')
 SECRET_KEY = env('SECRET_KEY')
 
 # DEBUG=True muestra errores detallados. Siempre False en producción.
-DEBUG = env.bool('DEBUG', default=True)
+DEBUG = env.bool('DEBUG')
 
 ALLOWED_HOSTS = ['*']  # Solo para desarrollo local
 

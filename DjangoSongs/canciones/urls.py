@@ -1,8 +1,10 @@
 from django.urls import path
 from . import views
 
-app_name = 'canciones'  # Espacio de nombres para evitar colisiones entre apps
+app_name = 'canciones' 
 
 urlpatterns = [
-    path('', views.index, name='index'),  # Ruta raíz → vista index
+    path('', views.lista_canciones, name='index'), 
+    path('crear/', views.crear_cancion, name='create'), 
+    path('editar/<int:cancion_id>/', views.editar_cancion, name='update'),
 ]

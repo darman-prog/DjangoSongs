@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Django Songs{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <style>
+        /* ── Variables globales ──────────────────────────────────────── */
+        :root {
+            --verde:        #00e676;
+            --verde-alfa:   rgba(0, 230, 118, 0.10);
+            --verde-borde:  rgba(0, 230, 118, 0.22);
+            --verde-glow:   rgba(0, 230, 118, 0.06);
+            --fondo:        #080b0f;
+            --fondo-card:   #0d1117;
+            --fondo-nav:    rgba(8, 11, 15, 0.88);
+            --borde:        rgba(255, 255, 255, 0.06);
+            --texto:        #d8dee9;
+            --texto-dim:    #4a5568;
+            --texto-mid:    #7a8a9a;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--fondo);
+            color: var(--texto);
+            min-height: 100vh;
+            padding-bottom: 5rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Cuadrícula de fondo */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 230, 118, .018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 230, 118, .018) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Radial glow superior */
+        body::after {
+            content: '';
+            position: fixed;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 500px;
+            background: radial-gradient(ellipse, rgba(0, 230, 118, 0.07) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Navbar ──────────────────────────────────────────────────── */
+        .dj-nav {
+            background: var(--fondo-nav);
+            border-bottom: 1px solid var(--borde);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: .85rem 0;
+        }
+
+        /* Línea decorativa bajo el nav */
+        .dj-nav::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--verde), transparent);
+            opacity: .35;
+        }
+
+        .dj-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.65rem;
+            letter-spacing: .12em;
+            color: var(--verde);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            transition: opacity .2s;
+        }
+        .dj-brand:hover { opacity: .75; color: var(--verde); }
+
+        .dj-brand-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--verde-alfa);
+            border: 1px solid var(--verde-borde);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .85rem;
+            color: var(--verde);
+        }
+
+        .dj-nav-link {
+            font-size: .75rem;
+            font-weight: 500;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--texto-mid);
+            text-decoration: none;
+            padding: .42rem .9rem;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: color .15s, background .15s, border-color .15s;
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+        }
+        .dj-nav-link:hover {
+            color: var(--verde);
+            background: var(--verde-alfa);
+            border-color: var(--verde-borde);
+        }
+        .dj-nav-link.activo {
+            color: var(--verde);
+            background: var(--verde-alfa);
+            border-color: var(--verde-borde);
+        }
+        /* ── Contenido principal ─────────────────────────────────────── */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            padding: 2.5rem 0 3rem;
+        }
+
+        /* ── Footer ──────────────────────────────────────────────────── */
+        .dj-footer {
+            position: fixed;
+            inset: auto 0 0;
+            background: var(--fondo-nav);
+            border-top: 1px solid var(--borde);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.2rem;
+            padding: .6rem 1rem;
+            z-index: 50;
+        }
+
+        .dj-footer-text {
+            font-size: .62rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--texto-dim);
+        }
+
+        .dj-footer-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--verde);
+            opacity: .45;
+        }
+
+        /* ── Mensajes / alertas ──────────────────────────────────────── */
+        .dj-alert {
+            font-size: .82rem;
+            font-weight: 500;
+            letter-spacing: .02em;
+            border-radius: 10px;
+            border: 1px solid var(--verde-borde);
+            background: var(--verde-alfa);
+            color: var(--verde);
+            padding: .7rem 1rem;
+        }
+
+        /* ── Scrollbar personalizada ─────────────────────────────────── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--fondo); }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 230, 118, .18);
+            border-radius: 99px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 230, 118, .35);
+        }
+
+        /* ── Selección de texto ──────────────────────────────────────── */
+        ::selection {
+            background: rgba(0, 230, 118, .25);
+            color: var(--verde);
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- ── Navbar ─────────────────────────────────────────────────── -->
+    <nav class="dj-nav">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <a href="{% url 'canciones:index' %}" class="dj-brand">
+                Django Songs
+            </a>
+
+            <div class="d-flex align-items-center gap-2">
+                <a href="{% url 'canciones:index' %}"
+                    class="dj-nav-link {% block nav_catalogo %}{% endblock %}">
+                    <i class="bi bi-grid-3x3-gap-fill" style="font-size:.7rem;"></i>
+                    Catálogo
+                </a>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- ── Mensajes flash (opcional) ──────────────────────────────── -->
+    {% if messages %}
+    <div class="container" style="position:relative;z-index:1;padding-top:1rem;">
+        {% for message in messages %}
+        <div class="dj-alert d-flex align-items-center gap-2 mb-2">
+            <i class="bi bi-check-circle-fill"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ── Contenido ──────────────────────────────────────────────── -->
+    <main class="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- ── Footer ─────────────────────────────────────────────────── -->
+    <footer class="dj-footer">
+        <span class="dj-footer-dot"></span>
+        <span class="dj-footer-text">Django Songs</span>
+        <span class="dj-footer-dot"></span>
+        <span class="dj-footer-text">Catálogo Musical Personal</span>
+        <span class="dj-footer-dot"></span>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

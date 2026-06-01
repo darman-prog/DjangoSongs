@@ -60,11 +60,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'django_songs.wsgi.application'
 
-# ─── Base de datos (SQLite para FASE 1 — MySQL llega en FASE 2) ────────────────
+# ─── Base de datos (MySQL FASE 2) ──────────────────────────────────────────────
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
     }
 }
 

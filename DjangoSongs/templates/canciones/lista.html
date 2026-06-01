@@ -285,12 +285,35 @@
     color: var(--texto-dim);
     margin-bottom: 2rem;
   }
-
   /* ── Modal de confirmación */
   .modal-eliminar .modal-content {
-    background: #0d1117;
-    border: 1px solid rgba(239, 68, 68, 0.18);
+    background: #141921 !important;
+    border: 1px solid rgba(239, 68, 68, 0.25);
     border-radius: 14px;
+    position: relative;
+  }
+
+  /* Input dentro del modal */
+  .dj-input {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--borde) !important;
+    color: var(--texto) !important;
+    border-radius: 8px;
+  }
+  .dj-input:focus {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--verde-borde) !important;
+    box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.12) !important;
+    color: var(--texto) !important;
+  }
+  .dj-input::placeholder {
+    color: var(--texto-dim) !important;
+  }
+
+  .btn-confirmar-del:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
   }
 
   .modal-warning-label {
@@ -310,6 +333,12 @@
     font-size: 0.88rem;
     color: var(--texto-dim);
     margin: 0.75rem 0 1.75rem;
+  }
+
+  .modal-eliminar.show {
+    background-color: rgba(10, 15, 20, 0.85) !important;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 
   .btn-cancelar {
@@ -354,28 +383,33 @@
 {% endblock %} {% block content %}
 
 <!-- ── Encabezado-->
-<div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-5">
-    <div>
-        <p class="page-eyebrow">
-            <i class="bi bi-record-circle me-1" style="color: var(--verde); font-size: .7rem;"></i>
-            Colección
-        </p>
-        <h1 class="page-title">Mis Canciones</h1>
-    </div>
+<div
+  class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-5"
+>
+  <div>
+    <p class="page-eyebrow">
+      <i
+        class="bi bi-record-circle me-1"
+        style="color: var(--verde); font-size: 0.7rem"
+      ></i>
+      Colección
+    </p>
+    <h1 class="page-title">Mis Canciones</h1>
+  </div>
 
-    <div class="d-flex align-items-center gap-3">
-        <span class="stat-pill">
-            <i class="bi bi-vinyl me-1" style="font-size: .75rem; opacity: .7;"></i>
-            {{ canciones|length }} track{{ canciones|length|pluralize:",s" }}
-        </span>
+  <div class="d-flex align-items-center gap-3">
+    <span class="stat-pill">
+      <i class="bi bi-vinyl me-1" style="font-size: 0.75rem; opacity: 0.7"></i>
+      {{ canciones|length }} track{{ canciones|length|pluralize:",s" }}
+    </span>
 
-        <a href="{% url 'canciones:create' %}" class="btn-add-song">
-            <span class="btn-add-icon">
-                <i class="bi bi-plus-lg"></i>
-            </span>
-            <span>Añadir Canción</span>
-        </a>
-    </div>
+    <a href="{% url 'canciones:create' %}" class="btn-add-song">
+      <span class="btn-add-icon">
+        <i class="bi bi-plus-lg"></i>
+      </span>
+      <span>Añadir Canción</span>
+    </a>
+  </div>
 </div>
 
 {% if canciones %}
@@ -411,7 +445,8 @@
               >✏️</a
             >
 
-            <button type="button"
+            <button
+              type="button"
               class="btn-accion btn-borrar"
               data-bs-toggle="modal"
               data-bs-target="#modalEliminar"
@@ -443,14 +478,13 @@
 </div>
 {% endif %}
 
-<!-- ── Modal: confirmar eliminación ───────────────────────────────────── -->
+<!-- ── Modal: confirmar eliminación ──────────────────────────────── -->
 <div
   class="modal fade modal-eliminar"
   id="modalEliminar"
   tabindex="-1"
   aria-labelledby="modalEliminarLabel"
   aria-hidden="true"
-  data-bs-container="body"
   data-bs-backdrop="false"
 >
   <div class="modal-dialog modal-dialog-centered modal-sm">
@@ -461,23 +495,33 @@
 
       <form method="POST" id="form-eliminar">
         {% csrf_token %}
-        
+
         <div class="mb-3">
-          <label for="input-confirmar-nombre" class="form-label text-muted small mt-2">
+          <label
+            for="input-confirmar-nombre"
+            class="form-label text-muted small mt-2"
+          >
             Escribe el nombre exacto para confirmar:
           </label>
-          <input type="text" 
-                 id="input-confirmar-nombre" 
-                 class="form-control dj-input text-center" 
-                 placeholder="Nombre de la canción..." 
-                 autocomplete="off">
+          <input
+            type="text"
+            id="input-confirmar-nombre"
+            class="form-control dj-input text-center"
+            placeholder="Nombre de la canción..."
+            autocomplete="off"
+          />
         </div>
 
         <div class="d-flex gap-2">
-          <button type="button" class="btn-cancelar" data-bs-dismiss="modal" onclick="document.querySelector('.modal-backdrop').remove();">
+          <button type="button" class="btn-cancelar" data-bs-dismiss="modal">
             Cancelar
           </button>
-          <button type="submit" id="btn-confirmar-del" class="btn-confirmar-del" disabled>
+          <button
+            type="submit"
+            id="btn-confirmar-del"
+            class="btn-confirmar-del"
+            disabled
+          >
             Eliminar
           </button>
         </div>
@@ -488,45 +532,42 @@
 
 {% endblock %} {% block extra_js %}
 <script>
-    const modalEliminar = document.getElementById('modalEliminar');
-    if (modalEliminar) {
-        // Capturamos los nuevos elementos que usaremos para la validación
-        const previewName = modalEliminar.querySelector('#modal-song-name');
-        const formEliminar = modalEliminar.querySelector('#form-eliminar');
-        const inputConfirmar = modalEliminar.querySelector('#input-confirmar-nombre');
-        const btnEliminar = modalEliminar.querySelector('#btn-confirmar-del');
-        
-        // Variable global temporal para recordar el nombre correcto de la canción seleccionada
-        let nombreCorrecto = "";
+  const modalEliminar = document.getElementById("modalEliminar");
+  if (modalEliminar) {
+    // Capturamos los nuevos elementos que usaremos para la validación
+    const previewName = modalEliminar.querySelector("#modal-song-name");
+    const formEliminar = modalEliminar.querySelector("#form-eliminar");
+    const inputConfirmar = modalEliminar.querySelector(
+      "#input-confirmar-nombre",
+    );
+    const btnEliminar = modalEliminar.querySelector("#btn-confirmar-del");
 
-        modalEliminar.addEventListener('show.bs.modal', function (event) {
-            const boton = event.relatedTarget;
-            
-            const cancionId = boton.getAttribute('data-id');
-            nombreCorrecto = boton.getAttribute('data-titulo'); // Guardamos el título real
-            
-            // 1. Actualizamos el texto de vista previa en tu modal
-            previewName.textContent = nombreCorrecto;
-            
-            // 2. Cambiamos la dirección (action) del formulario dinámicamente
-            formEliminar.action = `/eliminar/${cancionId}/`;
+    // Variable global temporal para recordar el nombre correcto de la canción seleccionada
+    let nombreCorrecto = "";
 
-            // 3. Limpiamos el input y bloqueamos el botón cada vez que se abre el modal
-            inputConfirmar.value = "";
-            btnEliminar.disabled = true;
-        });
+    modalEliminar.addEventListener("show.bs.modal", function (event) {
+      const boton = event.relatedTarget;
 
-        // 4. Compara lo escrito con el nombre real en tiempo real
-        inputConfirmar.addEventListener('input', function () {
-            // .trim() elimina espacios vacíos accidentales al inicio o final
-            if (inputConfirmar.value.trim() === nombreCorrecto.trim()) {
-                // Si coincide exactamente, encendemos el botón
-                btnEliminar.disabled = false;
-            } else {
-                // Si no coincide o borra algo, se queda bloqueado
-                btnEliminar.disabled = true;
-            }
-        });
-    }
+      const cancionId = boton.getAttribute("data-id");
+      nombreCorrecto = boton.getAttribute("data-titulo"); // Guardamos el título real
+
+      // 1. Actualizamos el texto de vista previa en tu modal
+      previewName.textContent = nombreCorrecto;
+
+      // 2. Cambiamos la dirección (action) del formulario dinámicamente
+      formEliminar.action = `/eliminar/${cancionId}/`;
+
+      // 3. Limpiamos el input y bloqueamos el botón cada vez que se abre el modal
+      inputConfirmar.value = "";
+      btnEliminar.disabled = true;
+    });
+
+    // 4. Compara lo escrito con el nombre real en tiempo real
+    inputConfirmar.addEventListener("input", function () {
+      // .trim() elimina espacios vacíos accidentales al inicio o final
+      btnEliminar.disabled =
+        inputConfirmar.value.trim() !== nombreCorrecto.trim();
+    });
+  }
 </script>
 {% endblock %}

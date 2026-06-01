@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="form-wrapper">
+
+    <!-- Encabezado -->
+    <div class="form-header">
+        <p class="page-eyebrow">
+            <i class="bi bi-plus-circle me-1"></i>
+            Nuevo Track
+        </p>
+        <h2 id="form-title" class="page-title">Inyectar Canción</h2>
+    </div>
+
+    <!-- Tarjeta del formulario -->
+    <div class="form-card">
+        <form method="POST" aria-labelledby="form-title" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="field-group">
+                <label for="{{ field.id_for_label }}" class="field-label {{ field.field.label_class }}">
+                    {{ field.label }}
+                </label>
+
+                {{ field|add_class:"dj-input" }}
+
+                {% if field.help_text %}
+                <div class="field-hint">{{ field.help_text }}</div>
+                {% endif %}
+
+                {% if field.errors %}
+                <div class="field-error" role="alert" aria-live="polite">
+                    <i class="bi bi-exclamation-circle-fill me-1"></i>
+                    {{ field.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <!-- Acciones -->
+            <div class="form-actions">
+                <button type="submit" class="btn-save" aria-label="Guardar canción">
+                    <span class="btn-save-icon"><i class="bi bi-floppy2-fill"></i></span>
+                    <span>Guardar</span>
+                </button>
+                <a href="{% url 'canciones:index' %}" class="btn-cancel" role="button">
+                    Cancelar
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<style>
+    /* ── Variables locales ────────────────────────────────────── */
+    :root {
+        --verde:       #00e676;
+        --verde-alfa:  rgba(0, 230, 118, 0.09);
+        --verde-borde: rgba(0, 230, 118, 0.22);
+        --fondo:       #080b0f;
+        --fondo-card:  #0d1117;
+        --fondo-input: #0a0e14;
+        --borde:       rgba(255, 255, 255, 0.07);
+        --texto:       #d8dee9;
+        --texto-dim:   #4a5568;
+        --texto-mid:   #7a8a9a;
+        --error:       #fc8181;
+        --error-alfa:  rgba(252, 129, 129, 0.10);
+    }
+
+    /* ── Contenedor centrado ──────────────────────────────────── */
+    .form-wrapper {
+        max-width: 560px;
+        margin: 3rem auto 5rem;
+        padding: 0 1rem;
+    }
+
+    /* ── Encabezado ───────────────────────────────────────────── */
+    .page-eyebrow {
+        font-size: .7rem;
+        font-weight: 600;
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        color: var(--verde);
+        margin-bottom: .35rem;
+    }
+
+    .page-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2.4rem;
+        letter-spacing: .06em;
+        color: var(--texto);
+        margin-bottom: 1.8rem;
+        line-height: 1;
+    }
+
+    /* ── Tarjeta ──────────────────────────────────────────────── */
+    .form-card {
+        background: var(--fondo-card);
+        border: 1px solid var(--borde);
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow:
+            0 0 0 1px rgba(0, 230, 118, 0.05),
+            0 20px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    /* ── Grupos de campo ──────────────────────────────────────── */
+    .field-group {
+        margin-bottom: 1.4rem;
+        display: flex;
+        flex-direction: column;
+        gap: .4rem;
+    }
+
+    .field-label {
+        font-size: .75rem;
+        font-weight: 600;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: var(--texto-mid);
+    }
+
+    /* ── Input ────────────────────────────────────────────────── */
+    .dj-input {
+        width: 100%;
+        background: var(--fondo-input);
+        color: var(--texto);
+        border: 1px solid var(--borde);
+        border-radius: 10px;
+        padding: .62rem .85rem;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: .9rem;
+        transition: border-color .18s, box-shadow .18s, background .18s;
+        outline: none;
+        appearance: none;
+    }
+
+    .dj-input:hover {
+        border-color: rgba(255, 255, 255, 0.13);
+    }
+
+    .dj-input:focus {
+        background: #0c1018;
+        border-color: var(--verde);
+        box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.12);
+        color: var(--texto);
+    }
+
+    /* Select */
+    select.dj-input {
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237a8a9a' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right .85rem center;
+        padding-right: 2.2rem;
+    }
+
+    /* Textarea */
+    textarea.dj-input {
+        resize: vertical;
+        min-height: 90px;
+    }
+
+    /* ── Hint y error ─────────────────────────────────────────── */
+    .field-hint {
+        font-size: .73rem;
+        color: var(--texto-dim);
+        letter-spacing: .01em;
+    }
+
+    .field-error {
+        font-size: .75rem;
+        font-weight: 500;
+        color: var(--error);
+        background: var(--error-alfa);
+        border: 1px solid rgba(252, 129, 129, 0.2);
+        border-radius: 7px;
+        padding: .38rem .7rem;
+    }
+
+    /* ── Botones de acción ────────────────────────────────────── */
+    .form-actions {
+        display: flex;
+        gap: .75rem;
+        margin-top: 2rem;
+        padding-top: 1.4rem;
+        border-top: 1px solid var(--borde);
+    }
+
+    .btn-save {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .55rem;
+        padding: .58rem 1rem .58rem .58rem;
+        background: var(--verde);
+        color: #080b0f;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: .78rem;
+        font-weight: 700;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: opacity .18s, transform .15s, box-shadow .15s;
+    }
+
+    .btn-save:hover {
+        opacity: .88;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(0, 230, 118, 0.28);
+    }
+
+    .btn-save:active { transform: translateY(0); }
+
+    .btn-save-icon {
+        width: 26px;
+        height: 26px;
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .85rem;
+        flex-shrink: 0;
+    }
+
+    .btn-cancel {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: .62rem 1rem;
+        background: transparent;
+        color: var(--texto-mid);
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: .78rem;
+        font-weight: 600;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+        text-decoration: none;
+        border: 1px solid var(--borde);
+        border-radius: 10px;
+        transition: color .18s, border-color .18s, background .18s;
+    }
+
+    .btn-cancel:hover {
+        color: var(--texto);
+        border-color: rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    /* ── Accesibilidad ────────────────────────────────────────── */
+    a:focus-visible,
+    .btn-save:focus-visible,
+    .dj-input:focus-visible {
+        outline: 2px solid var(--verde);
+        outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        * { transition: none !important; animation: none !important; }
+    }
+</style>
+{% endblock %}

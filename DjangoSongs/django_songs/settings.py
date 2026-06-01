@@ -20,6 +20,7 @@ ALLOWED_HOSTS = ['*']  # Solo para desarrollo local
 # ─── Apps instaladas ───────────────────────────────────────────────────────────
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'widget_tweaks',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

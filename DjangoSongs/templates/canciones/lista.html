@@ -411,7 +411,7 @@
               >✏️</a
             >
 
-            <button
+            <button type="button"
               class="btn-accion btn-borrar"
               data-bs-toggle="modal"
               data-bs-target="#modalEliminar"
@@ -450,6 +450,8 @@
   tabindex="-1"
   aria-labelledby="modalEliminarLabel"
   aria-hidden="true"
+  data-bs-container="body"
+  data-bs-backdrop="false"
 >
   <div class="modal-dialog modal-dialog-centered modal-sm">
     <div class="modal-content p-4">
@@ -459,11 +461,25 @@
 
       <form method="POST" id="form-eliminar">
         {% csrf_token %}
+        
+        <div class="mb-3">
+          <label for="input-confirmar-nombre" class="form-label text-muted small mt-2">
+            Escribe el nombre exacto para confirmar:
+          </label>
+          <input type="text" 
+                 id="input-confirmar-nombre" 
+                 class="form-control dj-input text-center" 
+                 placeholder="Nombre de la canción..." 
+                 autocomplete="off">
+        </div>
+
         <div class="d-flex gap-2">
-          <button type="button" class="btn-cancelar" data-bs-dismiss="modal">
+          <button type="button" class="btn-cancelar" data-bs-dismiss="modal" onclick="document.querySelector('.modal-backdrop').remove();">
             Cancelar
           </button>
-          <button type="submit" class="btn-confirmar-del">Eliminar</button>
+          <button type="submit" id="btn-confirmar-del" class="btn-confirmar-del" disabled>
+            Eliminar
+          </button>
         </div>
       </form>
     </div>
@@ -472,15 +488,45 @@
 
 {% endblock %} {% block extra_js %}
 <script>
-  /* Inyectar datos de la canción en el modal antes de mostrarlo */
-  document
-    .getElementById("modalEliminar")
-    .addEventListener("show.bs.modal", function (e) {
-      const btn = e.relatedTarget;
-      document.getElementById("modal-song-name").textContent =
-        '"' + btn.dataset.titulo + '"';
-      document.getElementById("form-eliminar").action =
-        "/canciones/delete/" + btn.dataset.id + "/";
-    });
+    const modalEliminar = document.getElementById('modalEliminar');
+    if (modalEliminar) {
+        // Capturamos los nuevos elementos que usaremos para la validación
+        const previewName = modalEliminar.querySelector('#modal-song-name');
+        const formEliminar = modalEliminar.querySelector('#form-eliminar');
+        const inputConfirmar = modalEliminar.querySelector('#input-confirmar-nombre');
+        const btnEliminar = modalEliminar.querySelector('#btn-confirmar-del');
+        
+        // Variable global temporal para recordar el nombre correcto de la canción seleccionada
+        let nombreCorrecto = "";
+
+        modalEliminar.addEventListener('show.bs.modal', function (event) {
+            const boton = event.relatedTarget;
+            
+            const cancionId = boton.getAttribute('data-id');
+            nombreCorrecto = boton.getAttribute('data-titulo'); // Guardamos el título real
+            
+            // 1. Actualizamos el texto de vista previa en tu modal
+            previewName.textContent = nombreCorrecto;
+            
+            // 2. Cambiamos la dirección (action) del formulario dinámicamente
+            formEliminar.action = `/eliminar/${cancionId}/`;
+
+            // 3. Limpiamos el input y bloqueamos el botón cada vez que se abre el modal
+            inputConfirmar.value = "";
+            btnEliminar.disabled = true;
+        });
+
+        // 4. Compara lo escrito con el nombre real en tiempo real
+        inputConfirmar.addEventListener('input', function () {
+            // .trim() elimina espacios vacíos accidentales al inicio o final
+            if (inputConfirmar.value.trim() === nombreCorrecto.trim()) {
+                // Si coincide exactamente, encendemos el botón
+                btnEliminar.disabled = false;
+            } else {
+                // Si no coincide o borra algo, se queda bloqueado
+                btnEliminar.disabled = true;
+            }
+        });
+    }
 </script>
 {% endblock %}

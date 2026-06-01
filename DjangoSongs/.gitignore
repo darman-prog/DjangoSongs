@@ -20,3 +20,7 @@ Thumbs.db
 
 # Ignorar tu archivo secreto de contraseñas (por seguridad)
 .env
+
+# Ignorar skill agente
+SKILL.md
+AGENTS.md

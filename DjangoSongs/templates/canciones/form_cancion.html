@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="edit-wrapper">
+
+    <!-- Encabezado -->
+    <div class="edit-header">
+        <p class="page-eyebrow">
+            <i class="bi bi-pencil-square me-1"></i>
+            Editar Track
+        </p>
+        <h2 class="page-title">{{ titulo_pantalla }}</h2>
+    </div>
+
+    <!-- Tarjeta -->
+    <div class="edit-card">
+        <form method="POST" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="field-group">
+                <label for="{{ field.id_for_label }}" class="field-label">
+                    {{ field.label }}
+                </label>
+
+                {% render_field field class="dj-input" autocomplete="off" %}
+
+                {% if field.errors %}
+                <div class="field-error" role="alert">
+                    <i class="bi bi-exclamation-circle-fill me-1"></i>
+                    {{ field.errors|join:", " }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="edit-actions">
+                <a href="{% url 'canciones:index' %}" class="btn-cancelar">
+                    Volver
+                </a>
+                <button type="submit" class="btn-guardar">
+                    <span class="btn-icon"><i class="bi bi-floppy2-fill"></i></span>
+                    <span>Guardar Cambios</span>
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<style>
+    /* ── Variables ─────────────────────────────────────────────── */
+    :root {
+        --verde:        #00e676;
+        --verde-alfa:   rgba(0, 230, 118, 0.09);
+        --verde-borde:  rgba(0, 230, 118, 0.22);
+        --fondo-card:   #0d1117;
+        --fondo-input:  #090d12;
+        --borde:        rgba(255, 255, 255, 0.07);
+        --texto:        #d8dee9;
+        --texto-mid:    #7a8a9a;
+        --texto-dim:    #3e4a57;
+        --error:        #fc8181;
+        --error-alfa:   rgba(252, 129, 129, 0.10);
+    }
+
+    /* ── Layout ────────────────────────────────────────────────── */
+    .edit-wrapper {
+        max-width: 540px;
+        margin: 3rem auto 6rem;
+        padding: 0 1rem;
+    }
+
+    /* ── Encabezado ────────────────────────────────────────────── */
+    .page-eyebrow {
+        font-size: .7rem;
+        font-weight: 600;
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        color: var(--verde);
+        margin-bottom: .35rem;
+    }
+
+    .page-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2.4rem;
+        letter-spacing: .06em;
+        color: var(--texto);
+        margin-bottom: 1.8rem;
+        line-height: 1;
+    }
+
+    /* ── Tarjeta ───────────────────────────────────────────────── */
+    .edit-card {
+        background: var(--fondo-card);
+        border: 1px solid var(--borde);
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow:
+            0 0 0 1px rgba(0, 230, 118, 0.04),
+            0 20px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    /* ── Campos ────────────────────────────────────────────────── */
+    .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: .4rem;
+        margin-bottom: 1.4rem;
+    }
+
+    .field-label {
+        font-size: .72rem;
+        font-weight: 600;
+        letter-spacing: .09em;
+        text-transform: uppercase;
+        color: var(--texto-mid);
+        margin-bottom: 0;
+    }
+
+    /* ── Input base ────────────────────────────────────────────── */
+    .dj-input {
+        width: 100%;
+        background: var(--fondo-input);
+        color: var(--texto);
+        border: 1px solid var(--borde);
+        border-radius: 10px;
+        padding: .62rem .85rem;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: .88rem;
+        outline: none;
+        appearance: none;
+        transition: border-color .18s, box-shadow .18s, background .18s;
+    }
+
+    .dj-input:hover {
+        border-color: rgba(255, 255, 255, 0.13);
+    }
+
+    .dj-input:focus {
+        background: #0b0f15;
+        border-color: var(--verde);
+        box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.12);
+        color: var(--texto);
+    }
+
+    select.dj-input {
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237a8a9a' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right .85rem center;
+        padding-right: 2.2rem;
+    }
+
+    textarea.dj-input {
+        resize: vertical;
+        min-height: 88px;
+    }
+
+    /* ── Error ─────────────────────────────────────────────────── */
+    .field-error {
+        font-size: .74rem;
+        font-weight: 500;
+        color: var(--error);
+        background: var(--error-alfa);
+        border: 1px solid rgba(252, 129, 129, 0.18);
+        border-radius: 7px;
+        padding: .38rem .7rem;
+    }
+
+    /* ── Acciones ──────────────────────────────────────────────── */
+    .edit-actions {
+        display: flex;
+        gap: .75rem;
+        margin-top: 2rem;
+        padding-top: 1.4rem;
+        border-top: 1px solid var(--borde);
+    }
+
+    .btn-guardar {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .55rem;
+        padding: .55rem 1rem .55rem .55rem;
+        background: var(--verde);
+        color: #080b0f;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: .78rem;
+        font-weight: 700;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: opacity .18s, transform .15s, box-shadow .15s;
+    }
+
+    .btn-guardar:hover {
+        opacity: .88;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(0, 230, 118, 0.28);
+    }
+
+    .btn-guardar:active {
+        transform: translateY(0);
+        box-shadow: none;
+    }
+
+    .btn-icon {
+        width: 26px;
+        height: 26px;
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .82rem;
+        flex-shrink: 0;
+    }
+
+    .btn-cancelar {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: .62rem 1rem;
+        background: transparent;
+        color: var(--texto-mid);
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: .78rem;
+        font-weight: 600;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+        text-decoration: none;
+        border: 1px solid var(--borde);
+        border-radius: 10px;
+        transition: color .18s, border-color .18s, background .18s;
+    }
+
+    .btn-cancelar:hover {
+        color: var(--texto);
+        border-color: rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    /* ── Accesibilidad ─────────────────────────────────────────── */
+    .btn-guardar:focus-visible,
+    .btn-cancelar:focus-visible,
+    .dj-input:focus-visible {
+        outline: 2px solid var(--verde);
+        outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        * { transition: none !important; }
+    }
+</style>
+{% endblock %}

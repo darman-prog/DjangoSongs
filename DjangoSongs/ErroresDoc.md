@@ -24,17 +24,9 @@ El motor de plantillas de Django no interpreta llamadas a métodos con argumento
 - Archivo afectado: `templates/base.html` y `templates/canciones/lista.html`
 - Contexto: conflictos de z-index y pseudo-elementos fijos.
 
-### Por qué ocurrió
-
-1. Pseudo-elementos `body::before` y `body::after` tenían `z-index: 0`, pudiendo tapar contenido.
-2. El `.modal-backdrop` tenía z-index 1050 pero sin `pointer-events: auto`, limitando interactividad.
-3. Los pseudo-elementos con `position: fixed` y bajo z-index causaban problemas de rendering.
-
 ### Solución
 
-- Cambié `z-index: 0` a `z-index: -1` en los pseudo-elementos de `body` (grid y glow).
-- Añadí `pointer-events: auto` y `z-index: 1050 !important` al `.modal-backdrop`.
-- Mantuve `z-index: 1056` en `.modal-content` para que esté por encima del backdrop.
+- se quito el backdrop y se creo uno propio con css
 
 ---
 

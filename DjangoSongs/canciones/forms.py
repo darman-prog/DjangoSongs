@@ -9,7 +9,7 @@ class CancionForm(forms.ModelForm):
         
         # Le ponemos estilos bonitos de Bootstrap/Cyberpunk a los cuadros de texto
         widgets = {
-            'titulo': forms.TextInput(attrs={'class': 'form-control dj-input', 'placeholder': 'Ej. Neon Knights'}),
+            'titulo': forms.TextInput(attrs={'class': 'form-control dj-input', 'placeholder': 'Ej. Street Knights'}),
             'artista': forms.TextInput(attrs={'class': 'form-control dj-input', 'placeholder': 'Ej. Tokyo Pilot'}),
             'duracion': forms.TextInput(attrs={'class': 'form-control dj-input', 'placeholder': 'Ej. 3:45'}), 
             'album': forms.TextInput(attrs={'class': 'form-control dj-input', 'placeholder': 'Ej. Neon Genesis'}

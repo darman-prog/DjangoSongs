@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% block title %}{{ cancion.nombre|default:"Detalle" }} — Django Songs{% endblock %}
+
+{% block extra_css %}
+<style>
+  .detail-wrapper {
+    max-width: 560px;
+    margin: 2rem auto;
+  }
+
+  .detail-card {
+    background: var(--fondo-card);
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .detail-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+    background: var(--fondo-card);
+  }
+
+  .detail-img-placeholder {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fondo-card);
+    color: var(--texto-dim);
+    font-size: 4rem;
+  }
+
+  .detail-body {
+    padding: 1.5rem;
+  }
+
+  .detail-title {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.04em;
+    color: var(--texto);
+    margin: 0 0 0.15rem;
+    line-height: 1;
+  }
+
+  .detail-artist {
+    font-size: 0.95rem;
+    color: var(--texto-dim);
+    margin: 0 0 1.2rem;
+  }
+
+  .detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .detail-meta-item {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-mid);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    padding: 0.3rem 0.8rem;
+  }
+
+  .detail-embed {
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .detail-spotify-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.7rem 1.2rem;
+    background: #1db954;
+    color: #fff;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: opacity 0.18s, transform 0.15s;
+  }
+
+  .detail-spotify-btn:hover {
+    opacity: 0.88;
+    transform: translateY(-2px);
+    color: #fff;
+  }
+
+  .detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--texto-dim);
+    text-decoration: none;
+    font-size: 0.82rem;
+    margin-bottom: 1.5rem;
+    transition: color 0.15s;
+  }
+
+  .detail-back:hover {
+    color: var(--verde);
+  }
+
+  .detail-error {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .detail-error-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+  }
+
+  .detail-error-text {
+    font-size: 0.9rem;
+    color: var(--texto-dim);
+    margin-bottom: 1.5rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="{% url 'canciones:spotify_search' %}{% if request.GET.q %}?q={{ request.GET.q }}{% endif %}" class="detail-back">
+  <i class="bi bi-arrow-left"></i>
+  Volver a resultados
+</a>
+
+{% if error %}
+  <div class="detail-wrapper">
+    <div class="detail-card">
+      <div class="detail-error">
+        <span class="detail-error-icon">⚠️</span>
+        <p class="detail-error-text">{{ error }}</p>
+        <a href="{% url 'canciones:spotify_search' %}" class="detail-spotify-btn" style="display:inline-flex">
+          <i class="bi bi-search"></i>
+          Nueva búsqueda
+        </a>
+      </div>
+    </div>
+  </div>
+{% elif cancion %}
+  <div class="detail-wrapper">
+    <div class="detail-card">
+      <div style="position:relative">
+        <img
+          src="{{ cancion.portada }}"
+          alt="{{ cancion.nombre }}"
+          class="detail-img"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+        />
+        <div class="detail-img-placeholder" style="display:none;position:absolute;inset:0">
+          <i class="bi bi-music-note-beamed"></i>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <h1 class="detail-title">{{ cancion.nombre }}</h1>
+        <p class="detail-artist">{{ cancion.artistas }}</p>
+
+        <div class="detail-meta">
+          <span class="detail-meta-item">
+            <i class="bi bi-disc me-1"></i>
+            {{ cancion.album }}
+          </span>
+          {% if cancion.duracion_ms %}
+            <span class="detail-meta-item">
+              <i class="bi bi-clock me-1"></i>
+              {{ cancion.duracion_ms|floatformat:0 }}
+            </span>
+          {% endif %}
+        </div>
+
+        <div class="detail-embed">
+          <iframe
+            style="border-radius:12px"
+            src="https://open.spotify.com/embed/track/{{ cancion.id }}?utm_source=generator"
+            width="100%"
+            height="152"
+            frameborder="0"
+            allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+          ></iframe>
+        </div>
+
+        <a
+          href="{{ cancion.spotify_url }}"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="detail-spotify-btn"
+        >
+          <i class="bi bi-spotify"></i>
+          Abrir en Spotify
+        </a>
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

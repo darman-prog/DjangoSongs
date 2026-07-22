@@ -5,15 +5,16 @@ class CancionForm(forms.ModelForm):
     class Meta:
         model = Cancion
         # Le decimos qué campos queremos que aparezcan en el formulario
-        fields = ['titulo', 'artista','duracion','album']
+        fields = ['titulo', 'artista','duracion','album', 'youtube_url']
         
         # Le ponemos estilos bonitos de Bootstrap/Cyberpunk a los cuadros de texto
         widgets = {
             'titulo': forms.TextInput(attrs={'class': 'form-control dj-input', 'placeholder': 'Ej. Street Knights'}),
             'artista': forms.TextInput(attrs={'class': 'form-control dj-input', 'placeholder': 'Ej. Tokyo Pilot'}),
             'duracion': forms.TextInput(attrs={'class': 'form-control dj-input', 'placeholder': 'Ej. 3:45'}), 
-            'album': forms.TextInput(attrs={'class': 'form-control dj-input', 'placeholder': 'Ej. Neon Genesis'}
-            )}
+            'album': forms.TextInput(attrs={'class': 'form-control dj-input', 'placeholder': 'Ej. Neon Genesis'}),
+            'youtube_url': forms.URLInput(attrs={'class': 'form-control dj-input', 'placeholder': 'https://youtube.com/watch?v=...'}),
+            }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

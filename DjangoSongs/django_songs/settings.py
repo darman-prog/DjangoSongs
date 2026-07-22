@@ -81,6 +81,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# ─── Spotify API (vía RapidAPI) ────────────────────────────────────────────────
+RAPIDAPI_KEY = env('RAPIDAPI_KEY')
+
 # ─── Internacionalización ──────────────────────────────────────────────────────
 LANGUAGE_CODE = 'es-co'
 TIME_ZONE = 'America/Bogota'

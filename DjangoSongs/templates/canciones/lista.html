@@ -259,6 +259,12 @@
     color: #ef4444;
   }
 
+  .btn-youtube:hover {
+    background: rgba(255, 0, 0, 0.1);
+    border-color: rgba(255, 0, 0, 0.3);
+    color: #ff0000;
+  }
+
   /* ── Estado vacío */
   .empty-state {
     text-align: center;
@@ -314,6 +320,46 @@
     opacity: 0.35;
     cursor: not-allowed;
     transform: none;
+  }
+
+  /* ── Modal YouTube ────────────────────────────────────────────── */
+  .modal-youtube .modal-content {
+    background: var(--fondo-card);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+  }
+
+  .modal-youtube .modal-header {
+    border-bottom: 1px solid var(--borde);
+    padding: 1rem 1.25rem;
+  }
+
+  .modal-youtube .modal-title {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.06em;
+    color: var(--texto);
+  }
+
+  .modal-youtube .btn-close-white {
+    filter: brightness(0.6);
+    transition: filter 0.15s;
+  }
+
+  .modal-youtube .btn-close-white:hover {
+    filter: brightness(1);
+  }
+
+  .modal-youtube .modal-body {
+    padding: 0;
+    border-radius: 0 0 14px 14px;
+    overflow: hidden;
+  }
+
+  .modal-youtube.show {
+    background-color: rgba(10, 15, 20, 0.85) !important;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 
   .modal-warning-label {
@@ -438,6 +484,21 @@
 
         <td>
           <div class="d-flex gap-2">
+            {% if cancion.youtube_url %}
+            <button
+              type="button"
+              class="btn-accion btn-youtube"
+              data-bs-toggle="modal"
+              data-bs-target="#modalYoutube"
+              data-video-id="{{ cancion.youtube_video_id }}"
+              data-titulo="{{ cancion.titulo }}"
+              data-youtube-url="{{ cancion.youtube_url }}"
+              title="Ver en YouTube"
+            >
+              <i class="bi bi-youtube"></i>
+            </button>
+            {% endif %}
+
             <a
               href="{% url 'canciones:editar_cancion' cancion.id %}"
               class="btn-accion btn-editar"
@@ -477,6 +538,29 @@
   </div>
 </div>
 {% endif %}
+
+<!-- ── Modal: reproductor YouTube ────────────────────────────────── -->
+<div class="modal fade modal-youtube" id="modalYoutube" tabindex="-1" aria-hidden="true" data-bs-backdrop="false" data-origin="{{ origin }}">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalYoutubeLabel">Reproduciendo</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="ratio ratio-16x9" id="youtubeEmbedWrap">
+          <iframe id="youtubeIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="no-referrer"></iframe>
+        </div>
+        <div id="youtubeFallback" class="text-center p-4" style="display:none">
+          <p class="text-muted mb-3">Este video no se puede reproducir en el reproductor integrado.</p>
+          <a id="youtubeDirectLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-verde">
+            <i class="bi bi-youtube me-1"></i> Ver en YouTube
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ── Modal: confirmar eliminación ──────────────────────────────── -->
 <div
@@ -532,6 +616,45 @@
 
 {% endblock %} {% block extra_js %}
 <script>
+  /* ── YouTube modal: gestionar iframe ──────────────────────────
+   *
+   * El parámetro origin se calcula dinámicamente para evitar el
+   * Error 153 de YouTube. Se usa window.location.origin como fuente
+   * principal porque funciona en entornos con proxies o balanceadores
+   * sin depender de la detección del servidor. Si por algún motivo
+   * window.location.origin no está disponible (entornos muy restrictivos),
+   * se usa como respaldo el origin calculado por Django desde el request
+   * (data-origin en el modal).                                     */
+  const modalYoutube = document.getElementById("modalYoutube");
+  const iframeYoutube = document.getElementById("youtubeIframe");
+  const modalYoutubeLabel = document.getElementById("modalYoutubeLabel");
+  const youtubeFallback = document.getElementById("youtubeFallback");
+  const youtubeDirectLink = document.getElementById("youtubeDirectLink");
+  const youtubeEmbedWrap = document.getElementById("youtubeEmbedWrap");
+  const origin = window.location.origin || modalYoutube?.getAttribute("data-origin") || "";
+
+  if (modalYoutube && iframeYoutube) {
+    modalYoutube.addEventListener("show.bs.modal", function (event) {
+      const btn = event.relatedTarget;
+      const videoId = btn.getAttribute("data-video-id");
+      const titulo = btn.getAttribute("data-titulo");
+      const youtubeUrl = btn.getAttribute("data-youtube-url");
+      modalYoutubeLabel.textContent = titulo || "Reproduciendo";
+      youtubeDirectLink.href = youtubeUrl || "#";
+      youtubeFallback.style.display = "none";
+      youtubeEmbedWrap.style.display = "block";
+      iframeYoutube.src = "https://www.youtube-nocookie.com/embed/" + videoId + "?autoplay=1&origin=" + encodeURIComponent(origin);
+    });
+
+    modalYoutube.addEventListener("hide.bs.modal", function () {
+      iframeYoutube.src = "";
+    });
+
+    modalYoutube.addEventListener("hidden.bs.modal", function () {
+      iframeYoutube.src = "";
+    });
+  }
+
   const modalEliminar = document.getElementById("modalEliminar");
   if (modalEliminar) {
     // Capturamos los nuevos elementos que usaremos para la validación

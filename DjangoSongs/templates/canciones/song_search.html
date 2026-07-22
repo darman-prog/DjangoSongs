@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+{% block title %}Spotify — Django Songs{% endblock %}
+{% block nav_spotify %}activo{% endblock %}
+
+{% block extra_css %}
+<style>
+  .spotify-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .spotify-eyebrow {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--verde);
+    margin-bottom: 0.25rem;
+  }
+
+  .spotify-title {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    line-height: 0.92;
+    letter-spacing: 0.04em;
+    color: var(--texto);
+    margin: 0 0 1.5rem;
+  }
+
+  .spotify-search-form {
+    display: flex;
+    gap: 0.6rem;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .spotify-search-input {
+    flex: 1;
+    background: var(--fondo-card);
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 0.88rem;
+    color: var(--texto);
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+
+  .spotify-search-input:focus {
+    border-color: var(--verde);
+    box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.12);
+  }
+
+  .spotify-search-input::placeholder {
+    color: var(--texto-dim);
+  }
+
+  .spotify-search-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0 1.3rem;
+    background: var(--verde);
+    color: #080b0f;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: opacity 0.18s, transform 0.15s, box-shadow 0.15s;
+  }
+
+  .spotify-search-btn:hover {
+    opacity: 0.88;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 230, 118, 0.28);
+  }
+
+  .result-count {
+    font-size: 0.75rem;
+    color: var(--texto-dim);
+    text-align: center;
+    margin-top: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+
+  .spotify-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .spotify-card {
+    background: var(--fondo-card);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.18s, transform 0.15s, box-shadow 0.15s;
+  }
+
+  .spotify-card:hover {
+    border-color: var(--verde-borde);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 230, 118, 0.08);
+  }
+
+  .spotify-card-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+    background: var(--fondo-card);
+  }
+
+  .spotify-card-img-placeholder {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fondo-card);
+    color: var(--texto-dim);
+    font-size: 2.5rem;
+  }
+
+  .spotify-card-body {
+    padding: 1rem 1.1rem 1.2rem;
+  }
+
+  .spotify-card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--texto);
+    margin: 0 0 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .spotify-card-artist {
+    font-size: 0.78rem;
+    color: var(--texto-dim);
+    margin: 0 0 0.6rem;
+  }
+
+  .spotify-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .spotify-card-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.9rem;
+    background: var(--verde-alfa);
+    border: 1px solid var(--verde-borde);
+    border-radius: 8px;
+    color: var(--verde);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+
+  .spotify-card-btn:hover {
+    background: rgba(0, 230, 118, 0.18);
+    color: var(--verde);
+  }
+
+  .card-duration {
+    font-size: 0.72rem;
+    color: var(--texto-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .spotify-empty {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--texto-dim);
+  }
+
+  .spotify-empty-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+  }
+
+  .spotify-empty-title {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.06em;
+    color: var(--texto-dim);
+    margin-bottom: 0.3rem;
+  }
+
+  .spotify-empty-sub {
+    font-size: 0.85rem;
+    color: var(--texto-dim);
+  }
+
+  .spotify-error {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(252, 129, 129, 0.08);
+    border: 1px solid rgba(252, 129, 129, 0.2);
+    border-radius: 10px;
+    color: #fc8181;
+    font-size: 0.85rem;
+    margin: 1rem 0;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="spotify-header">
+  <p class="spotify-eyebrow">
+    <i class="bi bi-spotify me-1"></i>
+    Spotify
+  </p>
+  <h1 class="spotify-title">Descubrir Música</h1>
+
+  <form class="spotify-search-form" method="GET" action="{% url 'canciones:spotify_search' %}">
+    <input
+      type="text"
+      name="q"
+      class="spotify-search-input"
+      placeholder="Busca canciones, artistas..."
+      value="{{ query }}"
+      autofocus
+    />
+    <button type="submit" class="spotify-search-btn">
+      <i class="bi bi-search"></i>
+    </button>
+  </form>
+
+  {% if query and resultados %}
+    <p class="result-count">{{ resultados|length }} resultado{{ resultados|length|pluralize:",s" }} para "{{ query }}"</p>
+  {% endif %}
+</div>
+
+{% if error %}
+  <div class="spotify-error">
+    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+    {{ error }}
+  </div>
+{% endif %}
+
+{% if query and resultados %}
+  <div class="spotify-grid">
+    {% for track in resultados %}
+      <div class="spotify-card">
+        <div class="spotify-card-img" style="position:relative">
+          <img
+            src="{{ track.portada }}"
+            alt="{{ track.nombre }}"
+            style="width:100%;height:100%;object-fit:cover;display:block"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+          />
+          <div class="spotify-card-img-placeholder" style="display:none;position:absolute;inset:0">
+            <i class="bi bi-music-note-beamed"></i>
+          </div>
+        </div>
+        <div class="spotify-card-body">
+          <p class="spotify-card-title" title="{{ track.nombre }}">{{ track.nombre }}</p>
+          <p class="spotify-card-artist">{{ track.artistas }}</p>
+          <div class="spotify-card-footer">
+            <a href="{% url 'canciones:spotify_detail' track.id %}" class="spotify-card-btn">
+              <i class="bi bi-play-fill"></i>
+              Escuchar
+            </a>
+            <span class="card-duration">
+              {% if track.duracion_ms %}
+                {{ track.duracion_ms|floatformat:0|divisibleby:60000 }}:{{ track.duracion_ms|floatformat:0|divisibleby:1000 }}
+              {% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% elif query and not resultados and not error %}
+  <div class="spotify-empty">
+    <span class="spotify-empty-icon">🎵</span>
+    <p class="spotify-empty-title">Sin resultados</p>
+    <p class="spotify-empty-sub">No encontramos nada para "{{ query }}"</p>
+  </div>
+{% elif not query %}
+  <div class="spotify-empty">
+    <span class="spotify-empty-icon">🔍</span>
+    <p class="spotify-empty-title">Busca tu próxima canción favorita</p>
+    <p class="spotify-empty-sub">Escribe arriba para explorar el catálogo de Spotify</p>
+  </div>
+{% endif %}
+{% endblock %}

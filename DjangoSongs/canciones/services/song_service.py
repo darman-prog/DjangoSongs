@@ -19,6 +19,7 @@ def actualizar_datos_de_cancion(cancion_instancia, datos_formulario):
     cancion_instancia.titulo = datos_formulario.get('titulo')
     cancion_instancia.artista = datos_formulario.get('artista')
     cancion_instancia.duracion = datos_formulario.get('duracion')
+    cancion_instancia.youtube_url = datos_formulario.get('youtube_url')
     cancion_instancia.save()
     return cancion_instancia
 
@@ -51,5 +52,6 @@ def editar_cancion(cancion_id, datos_limpios):
     cancion.artista = datos_limpios.get('artista')
     cancion.duracion = datos_limpios.get('duracion')
     cancion.album = datos_limpios.get('album')
+    cancion.youtube_url = datos_limpios.get('youtube_url')
     cancion.save()
     return cancion

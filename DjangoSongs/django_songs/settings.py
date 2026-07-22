@@ -15,7 +15,7 @@ SECRET_KEY = env('SECRET_KEY')
 # DEBUG=True muestra errores detallados. Siempre False en producción.
 DEBUG = env.bool('DEBUG')
 
-ALLOWED_HOSTS = ['*']  # Solo para desarrollo local
+ALLOWED_HOSTS = ['darmanProg22.pythonanywhere.com']  
 
 # ─── Apps instaladas ───────────────────────────────────────────────────────────
 INSTALLED_APPS = [

@@ -9,8 +9,9 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Ignorar la base de datos local SQLite (si la usas temporalmente)
+# Ignorar la base de datos SQLite local
 *.sqlite3
+db.sqlite3
 
 # Ignorar carpetas del sistema operativo o del editor
 .vscode/

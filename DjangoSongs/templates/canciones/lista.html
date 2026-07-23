@@ -549,7 +549,7 @@
       </div>
       <div class="modal-body p-0">
         <div class="ratio ratio-16x9" id="youtubeEmbedWrap">
-          <iframe id="youtubeIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="no-referrer"></iframe>
+          <iframe id="youtubeIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
         </div>
         <div id="youtubeFallback" class="text-center p-4" style="display:none">
           <p class="text-muted mb-3">Este video no se puede reproducir en el reproductor integrado.</p>
@@ -624,7 +624,8 @@
    * sin depender de la detección del servidor. Si por algún motivo
    * window.location.origin no está disponible (entornos muy restrictivos),
    * se usa como respaldo el origin calculado por Django desde el request
-   * (data-origin en el modal).                                     */
+   * (data-origin en el modal).      
+   *                                */
   const modalYoutube = document.getElementById("modalYoutube");
   const iframeYoutube = document.getElementById("youtubeIframe");
   const modalYoutubeLabel = document.getElementById("modalYoutubeLabel");
@@ -632,6 +633,23 @@
   const youtubeDirectLink = document.getElementById("youtubeDirectLink");
   const youtubeEmbedWrap = document.getElementById("youtubeEmbedWrap");
   const origin = window.location.origin || modalYoutube?.getAttribute("data-origin") || "";
+
+  // Detectar Error 153 en runtime via postMessage de YouTube
+  window.addEventListener("message", function (event) {
+    if (
+      event.origin === "https://www.youtube-nocookie.com" ||
+      event.origin === "https://www.youtube.com"
+    ) {
+      try {
+        var data = JSON.parse(event.data);
+        if (data.event === "onError" && (data.info === 101 || data.info === 150 || data.info === 153)) {
+          youtubeFallback.style.display = "block";
+          youtubeEmbedWrap.style.display = "none";
+          iframeYoutube.src = "";
+        }
+      } catch (_) {}
+    }
+  });
 
   if (modalYoutube && iframeYoutube) {
     modalYoutube.addEventListener("show.bs.modal", function (event) {
@@ -641,13 +659,51 @@
       const youtubeUrl = btn.getAttribute("data-youtube-url");
       modalYoutubeLabel.textContent = titulo || "Reproduciendo";
       youtubeDirectLink.href = youtubeUrl || "#";
-      youtubeFallback.style.display = "none";
-      youtubeEmbedWrap.style.display = "block";
-      iframeYoutube.src = "https://www.youtube-nocookie.com/embed/" + videoId + "?autoplay=1&origin=" + encodeURIComponent(origin);
-    });
+      
+      if (!videoId) {
+        youtubeFallback.style.display = "block";
+        youtubeEmbedWrap.style.display = "none";
+        iframeYoutube.src = "";
+        return;
+      }
 
-    modalYoutube.addEventListener("hide.bs.modal", function () {
+      // Resetear estado mientras se verifica oEmbed
       iframeYoutube.src = "";
+      youtubeFallback.style.display = "none";
+      youtubeEmbedWrap.style.display = "none";
+
+      // Verificar vía oEmbed si el video permite incrustación
+      // (evita mostrar el player roto con Error 153)
+      const oembedUrl = `https://www.youtube.com/oembed?url=https://youtu.be/${videoId}&format=json`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+      fetch(oembedUrl, { signal: controller.signal })
+        .then(r => {
+          clearTimeout(timeoutId);
+          if (r.ok) {
+            return r.json();
+          } else {
+            youtubeFallback.style.display = "block";
+          }
+        })
+        .then(data => {
+          if (!data) return;
+          // Usar el src que YouTube devuelve en oEmbed (incluye feature=oembed)
+          var tmp = document.createElement("div");
+          tmp.innerHTML = data.html;
+          var src = tmp.querySelector("iframe").src
+            .replace("www.youtube.com", "www.youtube-nocookie.com")
+            + "&autoplay=1&origin=" + encodeURIComponent(origin);
+          iframeYoutube.src = src;
+          youtubeEmbedWrap.style.display = "block";
+        })
+        .catch(() => {
+          clearTimeout(timeoutId);
+          // Error de red/timeout — cargar igual, puede funcionar
+          youtubeEmbedWrap.style.display = "block";
+          iframeYoutube.src = "https://www.youtube-nocookie.com/embed/" + videoId + "?autoplay=1&origin=" + encodeURIComponent(origin);
+        });
     });
 
     modalYoutube.addEventListener("hidden.bs.modal", function () {

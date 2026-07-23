@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import environ
 
@@ -15,7 +16,11 @@ SECRET_KEY = env('SECRET_KEY')
 # DEBUG=True muestra errores detallados. Siempre False en producción.
 DEBUG = env.bool('DEBUG')
 
-ALLOWED_HOSTS = ['darmanProg22.pythonanywhere.com']  
+ALLOWED_HOSTS = ['darmanProg22.pythonanywhere.com', '127.0.0.1', 'localhost']
+# Política de referer necesaria para que el embed de YouTube funcione
+# sin el Error 153. Envía el origin completo solo al mismo origen y
+# solo el origin a destinos cross-origin como youtube.com.
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 # ─── Apps instaladas ───────────────────────────────────────────────────────────
 INSTALLED_APPS = [
@@ -61,13 +66,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'django_songs.wsgi.application'
 
-# ─── Base de datos (SQLite — proyecto escala pequeña) ──────────────────────────
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# ─── Base de datos ─────────────────────────────────────────────────────────────
+# SQLite local / MySQL en PythonAnywhere
+# En PA define DATABASE_URL en la pestaña "Environment variables" del web tab
+# Ej: mysql://user:password@host/dbname
+if os.environ.get('DATABASE_URL'):
+    DATABASES = {
+        'default': env.db()
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # ─── Validadores de contraseñas ────────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [

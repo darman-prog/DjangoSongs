@@ -1,8 +1,9 @@
 """Vistas para la aplicación de canciones."""
 import logging
-from .forms import CancionForm
-from django.shortcuts import redirect 
+from django.shortcuts import redirect
 from django.shortcuts import render
+from django_ratelimit.decorators import ratelimit
+from .forms import CancionForm
 from .services import song_service
 from .services.spotify_client import buscar_canciones, obtener_detalle_track
 
@@ -56,12 +57,16 @@ def editar_cancion(request, cancion_id):
     return render(request, 'canciones/form_cancion.html', {'form': form})
 
 
+@ratelimit(key='ip', rate='10/m', method='GET')
 def buscar_canciones_spotify(request):
     query = request.GET.get('q', '').strip()
     resultados = None
     error = None
 
-    if query:
+    if getattr(request, 'limited', False):
+        error = "Demasiadas búsquedas. Espera un momento e intenta de nuevo."
+
+    elif query:
         try:
             resultados = buscar_canciones(query)
             if resultados is None:
@@ -77,16 +82,22 @@ def buscar_canciones_spotify(request):
     })
 
 
+@ratelimit(key='ip', rate='20/m', method='GET')
 def detalle_cancion_spotify(request, track_id):
     cancion = None
     error = None
-    try:
-        cancion = obtener_detalle_track(track_id)
-        if cancion is None:
-            error = "No se pudo obtener la información de la canción."
-    except Exception as e:
-        logger.exception("Error obteniendo detalle de track %s", track_id)
-        error = "Ocurrió un error al obtener el detalle."
+
+    if getattr(request, 'limited', False):
+        error = "Demasiadas solicitudes. Espera un momento e intenta de nuevo."
+
+    else:
+        try:
+            cancion = obtener_detalle_track(track_id)
+            if cancion is None:
+                error = "No se pudo obtener la información de la canción."
+        except Exception as e:
+            logger.exception("Error obteniendo detalle de track %s", track_id)
+            error = "Ocurrió un error al obtener el detalle."
 
     return render(request, 'canciones/song_detail.html', {
         'cancion': cancion,

@@ -7,7 +7,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -15,17 +15,17 @@
     <style>
         /* ── Variables globales ──────────────────────────────────────── */
         :root {
-            --verde:        #00e676;
-            --verde-alfa:   rgba(0, 230, 118, 0.10);
-            --verde-borde:  rgba(0, 230, 118, 0.22);
-            --verde-glow:   rgba(0, 230, 118, 0.06);
-            --fondo:        #080b0f;
-            --fondo-card:   #0d1117;
-            --fondo-nav:    rgba(8, 11, 15, 0.88);
-            --borde:        rgba(255, 255, 255, 0.06);
-            --texto:        #d8dee9;
-            --texto-dim:    #4a5568;
-            --texto-mid:    #7a8a9a;
+            --obsidian:      #0a0a0f;
+            --slate:         #13141c;
+            --amber:         #f0a830;
+            --amber-alfa:    rgba(240, 168, 48, 0.10);
+            --amber-borde:   rgba(240, 168, 48, 0.24);
+            --amber-glow:    rgba(240, 168, 48, 0.06);
+            --ivory:         #e8e4dc;
+            --dust:          #5a5466;
+            --dust-light:    #7d7590;
+            --borde:         rgba(255, 255, 255, 0.06);
+            --fondo-nav:     rgba(10, 10, 15, 0.90);
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -33,38 +33,35 @@
         html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Space Grotesk', sans-serif;
-            background-color: var(--fondo);
-            color: var(--texto);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--obsidian);
+            color: var(--ivory);
             min-height: 100vh;
             padding-bottom: 5rem;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Cuadrícula de fondo */
+        /* Sutil gradiente radial ámbar — reemplaza la cuadrícula verde */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
-            z-index: -1; 
-            background-image:
-                linear-gradient(rgba(0, 230, 118, .018) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 230, 118, .018) 1px, transparent 1px);
-            background-size: 60px 60px;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse 900px 500px at 50% -100px, rgba(240, 168, 48, 0.05) 0%, transparent 70%),
+                radial-gradient(ellipse 600px 600px at 80% 90%, rgba(240, 168, 48, 0.025) 0%, transparent 60%);
             pointer-events: none;
         }
 
-        /* Radial glow superior */
+        /* Textura de ruido casi imperceptible */
         body::after {
             content: '';
             position: fixed;
-            top: -200px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: -1; 
-            width: 800px;
-            height: 500px;
-            background: radial-gradient(ellipse, rgba(0, 230, 118, 0.07) 0%, transparent 70%);
+            inset: 0;
+            z-index: -1;
+            opacity: 0.018;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
             pointer-events: none;
         }
 
@@ -72,59 +69,51 @@
         .dj-nav {
             background: var(--fondo-nav);
             border-bottom: 1px solid var(--borde);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
             position: sticky;
             top: 0;
             z-index: 100;
-            padding: .85rem 0;
+            padding: .9rem 0;
         }
 
-        /* Línea decorativa bajo el nav */
+        /* Línea decorativa ámbar bajo el nav */
         .dj-nav::after {
             content: '';
             position: absolute;
             bottom: -1px;
             left: 50%;
             transform: translateX(-50%);
-            width: 280px;
+            width: 200px;
             height: 1px;
-            background: linear-gradient(90deg, transparent, var(--verde), transparent);
-            opacity: .35;
+            background: linear-gradient(90deg, transparent, var(--amber), transparent);
+            opacity: .30;
         }
 
         .dj-brand {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 1.65rem;
-            letter-spacing: .12em;
-            color: var(--verde);
+            letter-spacing: .08em;
+            color: var(--ivory);
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: .5rem;
+            gap: .6rem;
             transition: opacity .2s;
         }
-        .dj-brand:hover { opacity: .75; color: var(--verde); }
+        .dj-brand:hover { opacity: .7; color: var(--ivory); }
 
-        .dj-brand-icon {
-            width: 28px;
-            height: 28px;
-            background: var(--verde-alfa);
-            border: 1px solid var(--verde-borde);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: .85rem;
-            color: var(--verde);
+        .dj-brand-accent {
+            color: var(--amber);
         }
 
         .dj-nav-link {
-            font-size: .75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .68rem;
             font-weight: 500;
             letter-spacing: .1em;
             text-transform: uppercase;
-            color: var(--texto-mid);
+            color: var(--dust-light);
             text-decoration: none;
             padding: .42rem .9rem;
             border-radius: 8px;
@@ -135,15 +124,16 @@
             gap: .4rem;
         }
         .dj-nav-link:hover {
-            color: var(--verde);
-            background: var(--verde-alfa);
-            border-color: var(--verde-borde);
+            color: var(--amber);
+            background: var(--amber-alfa);
+            border-color: var(--amber-borde);
         }
         .dj-nav-link.activo {
-            color: var(--verde);
-            background: var(--verde-alfa);
-            border-color: var(--verde-borde);
+            color: var(--amber);
+            background: var(--amber-alfa);
+            border-color: var(--amber-borde);
         }
+
         /* ── Contenido principal ─────────────────────────────────────── */
         .main-content {
             position: relative;
@@ -157,29 +147,30 @@
             inset: auto 0 0;
             background: var(--fondo-nav);
             border-top: 1px solid var(--borde);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 1.2rem;
-            padding: .6rem 1rem;
+            padding: .55rem 1rem;
             z-index: 50;
         }
 
         .dj-footer-text {
-            font-size: .62rem;
-            letter-spacing: .18em;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .58rem;
+            letter-spacing: .2em;
             text-transform: uppercase;
-            color: var(--texto-dim);
+            color: var(--dust);
         }
 
         .dj-footer-dot {
-            width: 5px;
-            height: 5px;
+            width: 4px;
+            height: 4px;
             border-radius: 50%;
-            background: var(--verde);
-            opacity: .45;
+            background: var(--amber);
+            opacity: .40;
         }
 
         /* ── Mensajes / alertas ──────────────────────────────────────── */
@@ -188,27 +179,27 @@
             font-weight: 500;
             letter-spacing: .02em;
             border-radius: 10px;
-            border: 1px solid var(--verde-borde);
-            background: var(--verde-alfa);
-            color: var(--verde);
+            border: 1px solid var(--amber-borde);
+            background: var(--amber-alfa);
+            color: var(--amber);
             padding: .7rem 1rem;
         }
 
         /* ── Scrollbar personalizada ─────────────────────────────────── */
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--fondo); }
+        ::-webkit-scrollbar-track { background: var(--obsidian); }
         ::-webkit-scrollbar-thumb {
-            background: rgba(0, 230, 118, .18);
+            background: rgba(240, 168, 48, .18);
             border-radius: 99px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 230, 118, .35);
+            background: rgba(240, 168, 48, .35);
         }
 
         /* ── Selección de texto ──────────────────────────────────────── */
         ::selection {
-            background: rgba(0, 230, 118, .25);
-            color: var(--verde);
+            background: rgba(240, 168, 48, .25);
+            color: var(--ivory);
         }
     </style>
 
@@ -221,7 +212,7 @@
         <div class="container d-flex align-items-center justify-content-between">
 
             <a href="{% url 'canciones:index' %}" class="dj-brand">
-                Django Songs
+                <span class="dj-brand-accent">♫</span> Django Songs
             </a>
 
             <div class="d-flex align-items-center gap-2">

@@ -1,22 +1,38 @@
 {% extends 'base.html' %} {% block title %}Catálogo — Django Songs{% endblock %}
 {% block nav_catalogo %}activo{% endblock %} {% block extra_css %}
 <style>
-  /*Encabezado de página */
+  /* ── Elemento firma: línea dorada animada ────────────────────── */
+  @keyframes drawLine {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+
+  .signature-line {
+    width: 80px;
+    height: 2px;
+    background: var(--amber);
+    margin-top: .6rem;
+    transform-origin: left;
+    animation: drawLine .8s cubic-bezier(.22, 1, .36, 1) both;
+    border-radius: 2px;
+  }
+
+  /* ── Encabezado de página ─────────────────────────────────────── */
   .page-eyebrow {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     font-weight: 600;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--verde);
-    margin-bottom: 0.25rem;
+    color: var(--amber);
+    margin-bottom: 0.3rem;
   }
 
   .page-title {
-    font-family: "Bebas Neue", sans-serif;
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    line-height: 0.92;
-    letter-spacing: 0.04em;
-    color: var(--texto);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+    line-height: 1;
+    letter-spacing: .01em;
+    color: var(--ivory);
     margin: 0;
   }
 
@@ -24,45 +40,46 @@
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    background: var(--verde-alfa);
-    border: 1px solid var(--verde-borde);
-    color: var(--verde);
-    font-size: 0.7rem;
+    background: var(--amber-alfa);
+    border: 1px solid var(--amber-borde);
+    color: var(--amber);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
     font-weight: 600;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     padding: 0.35rem 0.95rem;
     border-radius: 100px;
   }
 
-  /* ── Botón "Añadir Canción" ────────────────────────────────────────── */
+  /* ── Botón "Añadir Canción" ────────────────────────────────────── */
   .btn-add-song {
     display: inline-flex;
     align-items: center;
     gap: 0.55rem;
     padding: 0.52rem 1.1rem 0.52rem 0.52rem;
-    background: var(--verde);
-    color: var(--fondo);
-    font-family: "Space Grotesk", sans-serif;
-    font-size: 0.78rem;
-    font-weight: 700;
+    background: var(--amber);
+    color: var(--obsidian);
+    font-family: "Inter", sans-serif;
+    font-size: 0.76rem;
+    font-weight: 700; 
     letter-spacing: 0.06em;
     text-transform: uppercase;
     text-decoration: none;
     border-radius: 10px;
-    border: 1px solid var(--verde);
+    border: 1px solid var(--amber);
     transition:
       opacity 0.18s,
       transform 0.18s,
       box-shadow 0.18s;
-    box-shadow: 0 0 0 0 rgba(0, 230, 118, 0);
+    box-shadow: 0 0 0 0 rgba(240, 168, 48, 0);
   }
 
   .btn-add-song:hover {
     opacity: 0.88;
-    color: var(--fondo);
+    color: var(--obsidian);
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(0, 230, 118, 0.28);
+    box-shadow: 0 6px 24px rgba(240, 168, 48, 0.25);
   }
 
   .btn-add-song:active {
@@ -86,8 +103,8 @@
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    background: var(--verde);
-    color: #080b0f;
+    background: var(--amber);
+    color: var(--obsidian);
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -104,19 +121,19 @@
 
   .btn-verde:hover {
     opacity: 0.88;
-    color: #080b0f;
+    color: var(--obsidian);
     transform: translateY(-1px);
   }
 
-  /* ── Contenedor de la tabla*/
+  /* ── Contenedor de la tabla */
   .songs-wrap {
-    background: var(--fondo-card);
+    background: var(--slate);
     border: 1px solid var(--borde);
     border-radius: 14px;
     overflow: hidden;
   }
 
-  /* ── Tabla  */
+  /* ── Tabla */
   .songs-table {
     width: 100%;
     border-collapse: collapse;
@@ -127,18 +144,20 @@
   }
 
   .songs-table thead th {
-    font-size: 0.63rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
     font-weight: 600;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--texto-dim);
+    color: var(--dust);
     padding: 0.9rem 1.25rem;
   }
 
   .songs-table tbody tr {
     border-bottom: 1px solid var(--borde);
-    transition: background 0.15s;
+    transition: background 0.15s, border-color 0.15s;
     animation: fadeInRow 0.4s both;
+    border-left: 3px solid transparent;
   }
 
   .songs-table tbody tr:last-child {
@@ -146,7 +165,8 @@
   }
 
   .songs-table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.025);
+    background: rgba(240, 168, 48, 0.03);
+    border-left-color: var(--amber);
   }
 
   @keyframes fadeInRow {
@@ -154,7 +174,6 @@
       opacity: 0;
       transform: translateY(8px);
     }
-
     to {
       opacity: 1;
       transform: translateY(0);
@@ -162,15 +181,16 @@
   }
 
   .songs-table td {
-    padding: 1.05rem 1.25rem;
+    padding: 1.1rem 1.25rem;
     vertical-align: middle;
   }
 
   /* Número de track */
   .track-num {
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
     font-weight: 600;
-    color: var(--texto-dim);
+    color: var(--dust);
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.05em;
   }
@@ -179,46 +199,15 @@
   .song-titulo {
     font-weight: 600;
     font-size: 0.96rem;
-    color: var(--texto);
+    color: var(--ivory);
     line-height: 1.25;
     margin: 0;
   }
 
   .song-artista {
     font-size: 0.78rem;
-    color: var(--texto-dim);
+    color: var(--dust);
     margin: 2px 0 0;
-  }
-
-  /* Barra de popularidad */
-  .pop-wrap {
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-    min-width: 130px;
-  }
-
-  .pop-track {
-    flex: 1;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.07);
-    border-radius: 100px;
-    overflow: hidden;
-  }
-
-  .pop-fill {
-    height: 100%;
-    border-radius: 100px;
-    background: var(--verde);
-  }
-
-  .pop-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: var(--texto-dim);
-    font-variant-numeric: tabular-nums;
-    min-width: 30px;
-    text-align: right;
   }
 
   /* Botones de acción */
@@ -234,7 +223,7 @@
     cursor: pointer;
     font-size: 0.85rem;
     line-height: 1;
-    color: var(--texto-dim);
+    color: var(--dust);
     text-decoration: none;
     transition:
       background 0.15s,
@@ -248,9 +237,9 @@
   }
 
   .btn-editar:hover {
-    background: rgba(0, 230, 118, 0.1);
-    border-color: var(--verde-borde);
-    color: var(--verde);
+    background: var(--amber-alfa);
+    border-color: var(--amber-borde);
+    color: var(--amber);
   }
 
   .btn-borrar:hover {
@@ -279,18 +268,19 @@
   }
 
   .empty-title {
-    font-family: "Bebas Neue", sans-serif;
-    font-size: 1.7rem;
-    letter-spacing: 0.06em;
-    color: var(--texto-dim);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.04em;
+    color: var(--dust);
     margin-bottom: 0.45rem;
   }
 
   .empty-sub {
     font-size: 0.85rem;
-    color: var(--texto-dim);
+    color: var(--dust);
     margin-bottom: 2rem;
   }
+
   /* ── Modal de confirmación */
   .modal-eliminar .modal-content {
     background: #141921 !important;
@@ -303,17 +293,18 @@
   .dj-input {
     background: rgba(255, 255, 255, 0.05) !important;
     border: 1px solid var(--borde) !important;
-    color: var(--texto) !important;
+    color: var(--ivory) !important;
     border-radius: 8px;
+    font-family: 'Inter', sans-serif;
   }
   .dj-input:focus {
     background: rgba(255, 255, 255, 0.08) !important;
-    border-color: var(--verde-borde) !important;
-    box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.12) !important;
-    color: var(--texto) !important;
+    border-color: var(--amber-borde) !important;
+    box-shadow: 0 0 0 3px rgba(240, 168, 48, 0.12) !important;
+    color: var(--ivory) !important;
   }
   .dj-input::placeholder {
-    color: var(--texto-dim) !important;
+    color: var(--dust) !important;
   }
 
   .btn-confirmar-del:disabled {
@@ -324,7 +315,7 @@
 
   /* ── Modal YouTube ────────────────────────────────────────────── */
   .modal-youtube .modal-content {
-    background: var(--fondo-card);
+    background: var(--slate);
     border: 1px solid var(--borde);
     border-radius: 14px;
   }
@@ -335,19 +326,22 @@
   }
 
   .modal-youtube .modal-title {
-    font-family: "Bebas Neue", sans-serif;
-    font-size: 1.3rem;
-    letter-spacing: 0.06em;
-    color: var(--texto);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.05em;
+    color: var(--ivory);
   }
 
   .modal-youtube .btn-close-white {
     filter: brightness(0.6);
     transition: filter 0.15s;
+    background-color: var(--amber);
+    border-radius: 14px;
   }
 
   .modal-youtube .btn-close-white:hover {
-    filter: brightness(1);
+    filter: brightness(3);
+    color: var(--amber);
   }
 
   .modal-youtube .modal-body {
@@ -357,13 +351,14 @@
   }
 
   .modal-youtube.show {
-    background-color: rgba(10, 15, 20, 0.85) !important;
+    background-color: rgba(10, 10, 15, 0.88) !important;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
   }
 
   .modal-warning-label {
-    font-size: 0.65rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
     font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -377,12 +372,12 @@
     border-radius: 8px;
     padding: 0.6rem 1rem;
     font-size: 0.88rem;
-    color: var(--texto-dim);
+    color: var(--dust-light);
     margin: 0.75rem 0 1.75rem;
   }
 
   .modal-eliminar.show {
-    background-color: rgba(10, 15, 20, 0.85) !important;
+    background-color: rgba(10, 10, 15, 0.88) !important;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
   }
@@ -391,12 +386,12 @@
     flex: 1;
     background: transparent;
     border: 1px solid var(--borde);
-    color: var(--texto-dim);
+    color: var(--dust-light);
     padding: 0.52rem 1rem;
     border-radius: 8px;
     font-size: 0.82rem;
     font-weight: 500;
-    font-family: "Space Grotesk", sans-serif;
+    font-family: "Inter", sans-serif;
     cursor: pointer;
     transition: background 0.15s;
   }
@@ -414,7 +409,7 @@
     border-radius: 8px;
     font-size: 0.82rem;
     font-weight: 700;
-    font-family: "Space Grotesk", sans-serif;
+    font-family: "Inter", sans-serif;
     cursor: pointer;
     transition:
       opacity 0.15s,
@@ -436,11 +431,12 @@
     <p class="page-eyebrow">
       <i
         class="bi bi-record-circle me-1"
-        style="color: var(--verde); font-size: 0.7rem"
+        style="color: var(--amber); font-size: 0.7rem"
       ></i>
       Colección
     </p>
     <h1 class="page-title">Mis Canciones</h1>
+    <div class="signature-line"></div>
   </div>
 
   <div class="d-flex align-items-center gap-3">

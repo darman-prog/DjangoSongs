@@ -9,10 +9,11 @@
   }
 
   .detail-card {
-    background: var(--fondo-card);
+    background: var(--slate);
     border: 1px solid var(--borde);
     border-radius: 16px;
     overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
   }
 
   .detail-img {
@@ -20,7 +21,7 @@
     aspect-ratio: 1 / 1;
     object-fit: cover;
     display: block;
-    background: var(--fondo-card);
+    background: var(--slate);
   }
 
   .detail-img-placeholder {
@@ -29,8 +30,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--fondo-card);
-    color: var(--texto-dim);
+    background: var(--slate);
+    color: var(--dust);
     font-size: 4rem;
   }
 
@@ -39,17 +40,17 @@
   }
 
   .detail-title {
-    font-family: "Bebas Neue", sans-serif;
-    font-size: 1.8rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
     letter-spacing: 0.04em;
-    color: var(--texto);
+    color: var(--ivory);
     margin: 0 0 0.15rem;
     line-height: 1;
   }
 
   .detail-artist {
     font-size: 0.95rem;
-    color: var(--texto-dim);
+    color: var(--dust);
     margin: 0 0 1.2rem;
   }
 
@@ -61,11 +62,12 @@
   }
 
   .detail-meta-item {
-    font-size: 0.72rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--texto-mid);
+    color: var(--dust-light);
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--borde);
     border-radius: 8px;
@@ -86,7 +88,7 @@
     padding: 0.7rem 1.2rem;
     background: #1db954;
     color: #fff;
-    font-family: "Space Grotesk", sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: 0.82rem;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -106,7 +108,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    color: var(--texto-dim);
+    color: var(--dust);
     text-decoration: none;
     font-size: 0.82rem;
     margin-bottom: 1.5rem;
@@ -114,7 +116,7 @@
   }
 
   .detail-back:hover {
-    color: var(--verde);
+    color: var(--amber);
   }
 
   .detail-error {
@@ -131,7 +133,7 @@
 
   .detail-error-text {
     font-size: 0.9rem;
-    color: var(--texto-dim);
+    color: var(--dust);
     margin-bottom: 1.5rem;
   }
 </style>
